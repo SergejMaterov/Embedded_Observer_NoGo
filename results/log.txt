@@ -1,0 +1,82 @@
+############################################################
+# Lemma A (§3.1): purification non-uniqueness
+############################################################
+Target rho_O (p=0.7):
+[[0.7+0.j 0. +0.j]
+ [0. +0.j 0.3+0.j]]
+
+rho_O from purification 1:
+[[0.7+0.j 0. +0.j]
+ [0. +0.j 0.3+0.j]]
+
+rho_O from purification 2:
+[[ 0.7-0.j -0. +0.j]
+ [-0. -0.j  0.3-0.j]]
+
+Same reduced state (rho_O_1 == rho_O_2)? True
+Same global state  (psi1   == psi2)?     False
+
+PASSED: two distinct global states share an identical reduced rho_O.
+An observer confined to O cannot distinguish them from local data alone.
+
+############################################################
+# Lemma B (§3.2): no autonomous unitary under active coupling
+############################################################
+Same O-initial-state (|0>), two different R-initial-states:
+rho_O (R started |0>):
+[[0.6831+0.j    0.3253+0.035j]
+ [0.3253-0.035j 0.3169+0.j   ]]
+rho_O (R started |1>):
+[[0.3373-0.j     0.289 +0.0449j]
+ [0.289 -0.0449j 0.6627+0.j    ]]
+
+Purity (R=|0>): 0.781125   Purity (R=|1>): 0.723985
+Identical outputs? False
+
+If O's dynamics were autonomous/unitary, a single fixed W acting on
+the SAME initial rho_O=|0><0| must give the SAME (and pure) output
+regardless of R -- it does not.
+
+PASSED: no fixed O-only unitary law reproduces both outcomes.
+
+############################################################
+# Stock vs. flow separation (§3.4)
+############################################################
+Step 1 (entangling): purity of rho_O(1) = 0.621028
+  -> S(rho_O) > 0: (a) [reconstruction] has PERMANENTLY failed (Lemma A).
+
+Step 2 (exactly product u_O (x) u_R):
+  True rho_O(2)      =
+[[0.3667+0.j     0.0297+0.2046j]
+ [0.0297-0.2046j 0.6333-0.j    ]]
+  u_O rho_O(1) u_O^dagger =
+[[0.3667+0.j     0.0297+0.2046j]
+ [0.0297-0.2046j 0.6333-0.j    ]]
+  Exact match? True
+  Purity of rho_O(2) = 0.621028  (unchanged from step 1? True)
+
+PASSED: (b) [autonomy] holds EXACTLY for step 2 despite (a) having
+already, and permanently, failed after step 1. Stock and flow are
+logically separable, not one fact restated.
+
+############################################################
+# Exact Light Cone theorem (§4.2-4.3)
+############################################################
+Circuit: 10-qubit path graph, K=2 colour-class sublayers/step, generic gates.
+Unitarity check: True
+
+Graph distance d(0,9) = 9. Predicted EXACT zero for n < 4.5 (i.e. n <= 4), nonzero permitted from n = 5.
+
+n= 0: ||[A(n), B_static]|| = 0.000000e+00  ~0 (machine precision)
+n= 1: ||[A(n), B_static]|| = 2.077779e-15  ~0 (machine precision)
+n= 2: ||[A(n), B_static]|| = 2.972565e-15  ~0 (machine precision)
+n= 3: ||[A(n), B_static]|| = 3.875467e-15  ~0 (machine precision)
+n= 4: ||[A(n), B_static]|| = 4.764413e-15  ~0 (machine precision)
+n= 5: ||[A(n), B_static]|| = 6.968134e-01  
+n= 6: ||[A(n), B_static]|| = 1.371437e+00  
+n= 7: ||[A(n), B_static]|| = 1.784524e+00  
+n= 8: ||[A(n), B_static]|| = 1.929474e+00  
+n= 9: ||[A(n), B_static]|| = 1.985280e+00  
+
+PASSED: commutator is exactly zero (machine precision) for n<=4, and becomes O(1) starting exactly at the predicted n=5.
+
