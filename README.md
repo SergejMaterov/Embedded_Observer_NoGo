@@ -27,7 +27,6 @@ An observer is modelled as a proper tensor factor `O` of a finite-dimensional cl
 ## Repository layout
 
 ```
-paper/                                 the paper (.docx is the reference version; .pdf is a LibreOffice rendering)
 embedded_observer_checks.py            all numerical checks C1–C8 of Appendix A; prints the tables of the paper
 tests/test_paper_claims.py             pytest suite: one test per proved statement, fresh seeds
 results/checks_output.txt              output of the script that is reported in Appendix A
@@ -71,9 +70,9 @@ the 1e-16 level across numpy/BLAS versions are expected, the reported inequaliti
 
 ## Citation
 
-See `CITATION.cff`. If you use the paper, please cite the version in `paper/`.
+See `CITATION.cff`.
 
 ## License
 
-Code: MIT (see `LICENSE`). The text of the paper in `paper/` is © 2026 Sergej Materov and is provided for reading and
+Code: MIT (see `LICENSE`).© 2026 Sergej Materov and is provided for reading and
 verification.
