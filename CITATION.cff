@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this code or refer to the paper, please cite it as below."
+title: "Embedded_Observer_NoGo: numerical checks for 'The Embedded-Observer No-Go Theorem'"
+type: software
+authors:
+  - family-names: Materov
+    given-names: Sergej
+date-released: 2026-09-21
+version: 2.0.0
+license: MIT
+repository-code: "https://github.com/SergejMaterov/Embedded_Observer_NoGo"
+preferred-citation:
+  type: unpublished
+  title: "The Embedded-Observer No-Go Theorem: Non-Reconstructibility, Non-Autonomy, and Their Quantitative Form for Tensor-Factor Observers in Finite-Dimensional Closed Quantum Systems"
+  authors:
+    - family-names: Materov
+      given-names: Sergej
+  year: 2026
+  notes: "Revised version, September 2026"

@@ -1,104 +1,79 @@
-# Computational Appendix — The Embedded-Observer No-Go Theorem
+# Embedded_Observer_NoGo
 
-This repository reproduces every numerical claim in:
+[![CI](https://github.com/SergejMaterov/Embedded_Observer_NoGo/actions/workflows/ci.yml/badge.svg)](https://github.com/SergejMaterov/Embedded_Observer_NoGo/actions/workflows/ci.yml)
 
-> S. Materov, *The Embedded-Observer No-Go Theorem: Causal Order, Geometrically Induced Reduction,
-> and the Impossibility of Complete Self-Description in Any Closed Unitary Quantum System*, 2026.
+Paper and numerical checks for **The Embedded-Observer No-Go Theorem: Non-Reconstructibility, Non-Autonomy, and Their
+Quantitative Form for Tensor-Factor Observers in Finite-Dimensional Closed Quantum Systems** (Sergej Materov, revised
+version, September 2026).
 
-The paper's central results are proved analytically (Lemmas A, B; Theorem 3.1; Theorem 4.2). This
-repository does not "prove" anything by simulation — proofs are proofs — but it makes every
-non-obvious claim concretely checkable, and it exists because two of the four checks below turned up
-a genuine subtlety (§3.4's stock/flow separation) and a genuine methodological trap (§4's "vacuous
-test", see below) that are easy to get wrong even when the underlying mathematics is correct.
+An observer is modelled as a proper tensor factor `O` of a finite-dimensional closed quantum system
+`H = H_O ⊗ H_R` with unitary dynamics. The paper proves two independent obstructions, each with a quantitative form:
 
-## Repository structure
+1. **Kinematic.** The reduced state `ρ_O` leaves open a manifold of global pure states of real dimension
+   `2·r·d_R − r² − 1` (`r = rank ρ_O`) and fixes the state of the complement only up to its spectrum.
+   The amount of correlation is accessible (`I(O:R) = 2·S(ρ_O)`); its content is not.
+2. **Dynamical.** `O` obeys a fixed unitary law, independent of the state of `R`, **iff** the coupling is a product
+   unitary. In robust form, with `E` the (average) autonomy defect and `D` the normalised Hilbert–Schmidt distance
+   from the nearest product unitary,
+
+   ```
+   (1 + 1/d_O) · E  ≤  D²  ≤  2 (1 + 1/d_O) · E        (Theorem 4.2, both constants sharp)
+   ```
+
+   plus a worst-case bound (Proposition 4.7), a short-time autonomy bound for weak Hamiltonian coupling
+   (Corollary 4.4), a bound on the growth of the reduced entropy per step (Proposition 5.3), and an exact causal cone
+   with exact autonomy of the part of `O` beyond the cone of `R` for local circuits (Section 7).
+
+## Repository layout
 
 ```
-.
-├── README.md
-├── requirements.txt
-├── run_all.sh                      <- reproduces every number in the paper, in order
-├── LICENSE
-├── src/
-│   ├── lemma_a_purification.py     <- §3.1: purification non-uniqueness (Hughston-Jozsa-Wootters)
-│   ├── lemma_b_autonomy.py         <- §3.2: no autonomous unitary under active coupling
-│   ├── stock_flow_separation.py    <- §3.4: stock (a) and flow (b) are logically distinct
-│   └── exact_light_cone.py         <- §4.2-4.3: the Exact Light Cone theorem
-└── results/
-    └── log.txt                     <- full output of run_all.sh
+paper/                                 the paper (.docx is the reference version; .pdf is a LibreOffice rendering)
+embedded_observer_checks.py            all numerical checks C1–C8 of Appendix A; prints the tables of the paper
+tests/test_paper_claims.py             pytest suite: one test per proved statement, fresh seeds
+results/checks_output.txt              output of the script that is reported in Appendix A
+requirements.txt, requirements-dev.txt
+.github/workflows/ci.yml               CI: tests + full checks on Python 3.10–3.12
 ```
 
-## What each script proves, and what it doesn't
-
-- **`lemma_a_purification.py`** — exact, deterministic linear algebra: constructs two distinct global
-  qubit-pair states, related by a generic unitary on the R-factor alone, and confirms they reduce to
-  bit-for-bit identical ρ_O. This is a direct instance of the Hughston-Jozsa-Wootters theorem, not a
-  statistical claim — no sampling, no seed-dependence in the qualitative conclusion.
-
-- **`lemma_b_autonomy.py`** — same O-preparation, two different R-preparations, evolved through the
-  same generic entangling gate, giving two different (both mixed) ρ_O. Confirms no single fixed
-  O-only unitary can reproduce both outcomes from one input.
-
-- **`stock_flow_separation.py`** — the paper's central subtlety. An entangling step is followed by an
-  **exactly product** step. Confirms ρ_O(2) = u_O ρ_O(1) u_O† to numerical precision (≈1e-10) even
-  though ρ_O(1) is already mixed (purity ≈0.62) — i.e. condition (b) [autonomy] can hold for a single
-  transition even after condition (a) [reconstructibility] has already, and permanently, failed.
-
-- **`exact_light_cone.py`** — the paper's main quantitative result. Builds a discrete local circuit on
-  a 10-qubit chain from **generic (Haar-random) gates** — deliberately not a fine-tuned gate like an
-  exact-angle ZZ-rotation, which can produce a misleading algebraic coincidence where the commutator
-  stays zero for reasons unrelated to locality (see "A trap we hit ourselves" below). Confirms the
-  commutator is exactly zero (machine precision, ~1e-15) up to the predicted step, then jumps to O(1)
-  starting exactly at the predicted step.
-
-None of these scripts are Monte Carlo estimates of a statistical tendency (contrast with, e.g., a
-repository estimating a percentile from repeated random draws) — each is a single, deterministic
-numerical instance of an exact analytical claim, and the assertions in each script will hold for
-(almost) any seed, not just the ones checked in here. Seeds are fixed only for reproducibility of the
-exact printed numbers, not because the qualitative result depends on a lucky draw.
-
-## A trap we hit ourselves, twice, while developing this
-
-**Trap 1 — the vacuous commutator test.** An early version of the light-cone check computed
-`||[U^-n A U^n, U^-n B U^n]||` — i.e. it conjugated *both* operators by the same U^n. This is
-unitarily invariant: `||U^-n [A,B] U^n|| = ||[A,B]||` for *every* n, so the test trivially reproduces
-the n=0 value forever and tells you nothing about locality. `exact_light_cone.py` evolves *only* A,
-comparing it against a static B, which is the physically meaningful question ("does information
-injected at vertex 0 reach vertex d after n steps"). If you are adapting this code, keep that
-asymmetry — it is easy to accidentally symmetrize it back into the vacuous form.
-
-**Trap 2 — a fine-tuned gate hides the real phenomenon.** An early version used a single fixed
-ZZ-type rotation at exactly θ=π/4 on every edge. This gate happens to anticommute with X in a way
-that made certain Pauli-string commutators vanish identically regardless of causal separation — a
-genuine but misleading algebraic special case, not evidence about locality one way or the other.
-Switching to a **generic (Haar-random) gate per edge** removed the coincidence and revealed the true
-predicted behaviour (exact zero, then a clean jump to O(1)). If you test this yourself with a
-"nice" analytic gate, check whether your chosen gate has a special symmetry before trusting a
-null result.
-
-## Quickstart
+## Quick start
 
 ```bash
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-bash run_all.sh
+python -m pip install -r requirements-dev.txt
+python embedded_observer_checks.py      # ≈ 30 s; asserts on failure, prints the tables of Appendix A
+python -m pytest                        # ≈ 5 s
 ```
 
-Runtime: a few seconds total. Each script can also be run directly, e.g.
-`python3 src/exact_light_cone.py --n_qubits 12 --seed 3` to try other chain lengths or seeds.
+`make install`, `make test`, `make checks` do the same. The script uses seeded random numbers; last-digit differences at
+the 1e-16 level across numpy/BLAS versions are expected, the reported inequalities are not affected.
 
-## Citing
+## Which statement is checked where
 
-If this repository is cited independently of the paper, please cite the paper itself and reference
-this repository as its computational supplement.
+| Paper | Statement | Check |
+|---|---|---|
+| Prop. 3.1(b) | fibre dimension `2 r d_R − r² − 1` | `check_c7`, `test_proposition_3_1_fibre_dimension` |
+| Cor. 3.3 | `I(O:R) = 2 S(ρ_O)` | `test_corollary_3_3_…` |
+| Thm. 4.1, Rem. 4.5 | exact case; CNOT (fixed preparation) and SWAP examples | `check_c3`, `test_theorem_4_1_…`, `test_swap_…`, `test_cnot_…` |
+| Thm. 4.2 | closed form of `E_W` and the two-sided bound | `check_c1`, `check_c2`, `test_theorem_4_2_…` |
+| Cor. 4.4 | short-time autonomy bound | `check_c4`, `test_corollary_4_4_weak_coupling` |
+| Prop. 4.7 | worst-case bound | `check_c8`, `test_proposition_4_7_worst_case` |
+| Prop. 5.3 | entropy bound | `check_c5`, `test_proposition_5_3_entropy_bound` |
+| Thm. 7.2, Prop. 7.3 | exact causal cone, exact core autonomy | `check_c6`, `test_theorem_7_2_…`, `test_proposition_7_3_…` |
 
-### License
-[![License: CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+## Status and caveats
 
-**CC BY-NC 4.0** — Creative Commons Attribution-NonCommercial 4.0 International.
+- Numerical checks are sanity checks of statements that are **proved in the paper**; they are not proofs.
+- The results are elementary. Table 1 of the paper says which parts are known (unitary equivalence of purifications,
+  the light cone of a finite-depth circuit) and which are not found in this form in the literature (the quantitative
+  equivalence of Theorem 4.2). Independent checking of Theorem 4.2 is welcome; please open an issue.
+- Scope: finite-dimensional, closed, pure global state, observer = proper tensor factor. No claim is made about
+  continuum quantum field theory, about any interpretation of quantum mechanics, or about experiments.
+- `ε(U)` is an *average-input* quantity; worst-case statements are made explicitly (Proposition 4.7).
 
-You are free to use, share, and adapt this code for **non-commercial purposes**
-provided you give appropriate credit. Commercial use requires written permission
-from the author.
+## Citation
 
-© 2026 Sergej Materov <sergejmaterov2@gmail.com> ORCID: 0009-0001-3398-9906
+See `CITATION.cff`. If you use the paper, please cite the version in `paper/`.
+
+## License
+
+Code: MIT (see `LICENSE`). The text of the paper in `paper/` is © 2026 Sergej Materov and is provided for reading and
+verification.
