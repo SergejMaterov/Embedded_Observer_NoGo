@@ -1,4 +1,4 @@
-# Embedded_Observer_NoGo
+# Embedded Observer NoGo
 
 [![CI](https://github.com/SergejMaterov/Embedded_Observer_NoGo/actions/workflows/ci.yml/badge.svg)](https://github.com/SergejMaterov/Embedded_Observer_NoGo/actions/workflows/ci.yml)
 
