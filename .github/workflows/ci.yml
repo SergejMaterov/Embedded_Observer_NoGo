@@ -22,5 +22,5 @@ jobs:
         run: python -m pytest
       - name: Full numerical checks (Appendix A of the paper)
         run: python embedded_observer_checks.py > /dev/null
-      - name: Checks corollary 7.5.py
+      - name: Checks corollary 7.5
         run: embedded_observer_checks_corollary75.py > /dev/null
